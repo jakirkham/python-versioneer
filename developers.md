@@ -52,9 +52,9 @@ It returns `get_versions()["version"]`. See below for what that means.
 | `version` | The version string as selected by `version-style` |
 | `full-revisionid` | A full-length hex SHA1 (for git), or equivalent (for other VCS systems), or None. |
 | `dirty` | A boolean, True if the source tree has local changes. None if unknown. |
-| `error` | None, or a VersioneerError exception instance |
+| `error` | None, or a error description string |
 
-`version` will always be a string: if Versioneer is unable to compute a version, it will be set to `"unknown"`. `full-revisionid` and `dirty` will be a string, or None if that information is not available. `error` will be None, or an exception instance.
+`version` will always be a string: if Versioneer is unable to compute a version, it will be set to `"unknown"`. `full-revisionid` and `dirty` will be a string, or None if that information is not available. `error` will be None, or a string if there was an error.
 
 If the `error` key is non-None, that indicates that Versioneer was unable to obtain a satisfactory version string. There are several possibilities:
 
@@ -67,7 +67,7 @@ When `error` occurs, `version` will be set to "unknown", `full-revisionid` will 
 ```python
 v = get_versions()
 if v["error"]:
-    raise v["error"]
+    raise RuntimeError(v["error"])
 ```
 
 `get_versions()["version"]` is the most useful one, intended for `setup.py` and runtime version introspection to support a CLI command's `--version` argument. This is available in all modes, but has the most fidelity in from-vcs environments.
