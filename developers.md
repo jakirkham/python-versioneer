@@ -45,14 +45,16 @@ It returns `get_versions()["version"]`. See below for what that means.
 
 ## What does get_versions() return?
 
-`get_versions()` returns a small dictionary of rendered version information. It always contains four keys, whose values will be None if that information is not available:
+`get_versions()` returns a small dictionary of rendered version information, which always contains four keys: 
 
 | key | description |
 | --- | ---         |
 | `version` | The version string as selected by `version-style` |
-| `full-revisionid` | A full-length hex SHA1 (for git), or equivalent |
-| `dirty` | A boolean, True if the source tree has local changes |
+| `full-revisionid` | A full-length hex SHA1 (for git), or equivalent (for other VCS systems), or None. |
+| `dirty` | A boolean, True if the source tree has local changes. None if unknown. |
 | `error` | None, or a VersioneerError exception instance |
+
+`version` will always be a string: if Versioneer is unable to compute a version, it will be set to `"unknown"`. `full-revisionid` and `dirty` will be a string, or None if that information is not available. `error` will be None, or an exception instance.
 
 If the `error` key is non-None, that indicates that Versioneer was unable to obtain a satisfactory version string. There are several possibilities:
 
