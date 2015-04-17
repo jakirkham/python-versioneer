@@ -45,13 +45,28 @@ It returns `get_versions()["version"]`. See below for what that means.
 
 ## What does get_versions() return?
 
-`get_versions()` returns a small dictionary of rendered version information. It always contains three keys, whose values will be None if that information is not available:
+`get_versions()` returns a small dictionary of rendered version information. It always contains four keys, whose values will be None if that information is not available:
 
 | key | description |
 | --- | ---         |
 | `version` | The version string as selected by `version-style` |
 | `full-revisionid` | A full-length hex SHA1 (for git), or equivalent |
 | `dirty` | A boolean, True if the source tree has local changes |
+| `error` | None, or a VersioneerError exception instance |
+
+If the `error` key is non-None, that indicates that Versioneer was unable to obtain a satisfactory version string. There are several possibilities:
+
+* the closest tag found did not start with the configured `tag_prefix`
+* the output of `git describe` was unparseable
+* all modes failed: the source tree has no `.git` directory, expanded keywords, pre-built version data ("from-file"), or useful parent directory name.
+
+When `error` occurs, `version` will be set to "unknown", `full-revisionid` will be set (in from-vcs mode) or None (in other modes), and `dirty` will be None. If you want to prevent builds from happening without solid version information, use a snippet like this in your `__init__.py` or `setup.py`:
+
+```python
+v = get_versions()
+if v["error"]:
+    raise v["error"]
+```
 
 `get_versions()["version"]` is the most useful one, intended for `setup.py` and runtime version introspection to support a CLI command's `--version` argument. This is available in all modes, but has the most fidelity in from-vcs environments.
 
